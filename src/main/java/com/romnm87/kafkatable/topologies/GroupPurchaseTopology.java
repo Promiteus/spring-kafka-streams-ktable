@@ -5,6 +5,7 @@ import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class GroupPurchaseTopology implements IGroupPurchaseTopology {
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
-        KStream<String, Purchase> purchasesSteam = streamsBuilder.stream(PURCHASE_INPUT_TOPIC, Consumed.with(Serdes.String(), new JsonSerde<>(Purchase.class)))
+        KStream<String, Purchase> purchasesSteam = streamsBuilder.stream(PURCHASE_INPUT_TOPIC, Consumed.with(Serdes.String(), new JsonSerde<>(Purchase.class)).withOffsetResetPolicy(Topology.AutoOffsetReset.LATEST))
                 .selectKey((k, v) -> v.getId());
 
         purchasesSteam.print(Printed.<String, Purchase>toSysOut().withLabel("purchases_topic"));
