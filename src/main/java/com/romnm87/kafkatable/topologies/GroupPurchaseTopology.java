@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GroupPurchaseTopology implements IGroupPurchaseTopology {
-    private final static String PURCHASE_INPUT_TOPIC = "purchases";
+    public final static String PURCHASE_INPUT_TOPIC = "purchases";
     public final static String PURCHASES_GROUPS_STORE = "purchases_groups_store";
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
         KStream<String, Purchase> purchasesSteam = streamsBuilder.stream(PURCHASE_INPUT_TOPIC, Consumed.with(Serdes.String(), new JsonSerde<>(Purchase.class)).withOffsetResetPolicy(Topology.AutoOffsetReset.LATEST))
-                .selectKey((k, v) -> v.getId());
+                .selectKey((k, v) -> v.getName());
 
         purchasesSteam.print(Printed.<String, Purchase>toSysOut().withLabel("purchases_topic"));
 
