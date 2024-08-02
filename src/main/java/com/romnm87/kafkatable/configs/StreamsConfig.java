@@ -1,6 +1,6 @@
 package com.romnm87.kafkatable.configs;
 
-import com.romnm87.kafkatable.topologies.GroupPurchaseTopology;
+
 import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.admin.NewTopic;
