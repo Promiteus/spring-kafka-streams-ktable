@@ -28,6 +28,7 @@ public class GroupPurchaseTopology implements IGroupPurchaseTopology {
         KTable<String, Purchase> purchaseKTable = purchaseGroups.reduce((purchase, v1) -> Purchase.builder()
                 .currency(purchase.getCurrency())
                 .id(purchase.getId())
+                .timestamp(v1.getTimestamp())
                 .name(purchase.getName()).price(purchase.getPrice()+v1.getPrice()).build(), Materialized.as(PURCHASES_GROUPS_STORE));
 
         purchaseKTable.toStream().print(Printed.<String, Purchase>toSysOut().withLabel("purchases_groups"));
