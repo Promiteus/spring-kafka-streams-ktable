@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +17,5 @@ public class Purchase implements Serializable {
     private String name;
     private double price;
     private String currency = "RUR";
-    private long timestamp;
+    private long timestamp = new Date().getTime();
 }

@@ -22,7 +22,7 @@ public class GroupPurchaseTopology implements IGroupPurchaseTopology {
 
         purchasesSteam.print(Printed.<String, Purchase>toSysOut().withLabel("purchases_topic"));
 
-        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam.map((key, purchase) -> KeyValue.pair(purchase.getId(), purchase))
+        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam.map((key, purchase) -> KeyValue.pair(purchase.getName(), purchase))
                 .groupByKey(Grouped.with(Serdes.String(), new JsonSerde<>(Purchase.class)));
 
         KTable<String, Purchase> purchaseKTable = purchaseGroups.reduce((purchase, v1) -> Purchase.builder()
