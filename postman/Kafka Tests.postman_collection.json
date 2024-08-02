@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "22d67167-24c8-49c1-a202-510edc12a405",
+		"name": "Kafka Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Kafka-Streams-KTable",
+			"item": [
+				{
+					"name": "Отправить пачку сообщений",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\"id\": 1, \"name\": \"шариковая ручка\", \"price\": 30},\n    {\"id\": 2, \"name\": \"напиток cola\", \"price\": 85},\n    {\"id\": 3, \"name\": \"шариковая ручка\", \"price\": 30},\n    {\"id\": 4, \"name\": \"книга\", \"price\": 1230},\n    {\"id\": 5, \"name\": \"тетрадь\", \"price\": 18},\n    {\"id\": 6, \"name\": \"тетрадь\", \"price\": 22},\n    {\"id\": 7, \"name\": \"пакет-майка\", \"price\": 5}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/produce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"produce"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
