@@ -11,12 +11,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 public class StreamsConfig {
     @Autowired
     private IGroupPurchaseTopology groupPurchaseTopology;
     private KafkaStreams kafkaStreams;
+    private ExecutorService singleService;
 
     @Bean
     public Properties kafkaStreamsProps() {
@@ -46,18 +49,33 @@ public class StreamsConfig {
         return new StreamsBuilder();
     }
 
-
-    @Bean
-    public CommandLineRunner exec() {
-        return args -> {
-            this.groupPurchaseTopology.process(streamsBuilder());
-            this.kafkaStreams = new KafkaStreams(streamsBuilder().build(), kafkaStreamsProps());
+    /**
+     * Топология исполняется в отдельном потоке
+     * @param streamsBuilder StreamsBuilder
+     * @param kafkaStreamsProps Properties
+     * @return Runnable
+     */
+    private Runnable executeTopology(StreamsBuilder streamsBuilder, Properties kafkaStreamsProps) {
+        return () -> {
+            this.groupPurchaseTopology.process(streamsBuilder);
+            this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps);
             this.kafkaStreams.start();
         };
     }
 
+    @Bean
+    public CommandLineRunner exec() {
+        return args -> {
+            singleService = Executors.newSingleThreadExecutor();
+            singleService.submit(this.executeTopology(streamsBuilder(), kafkaStreamsProps()));
+
+        };
+    }
+
     @PreDestroy
-    public void destroy() {
+    public void destroy() throws InterruptedException {
         this.kafkaStreams.close();
+        //this.singleService.awaitTermination(30, TimeUnit.SECONDS);
+        this.singleService.shutdownNow();
     }
 }
