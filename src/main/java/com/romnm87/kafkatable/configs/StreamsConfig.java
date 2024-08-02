@@ -1,7 +1,9 @@
 package com.romnm87.kafkatable.configs;
 
+import com.romnm87.kafkatable.topologies.GroupPurchaseTopology;
 import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
 import jakarta.annotation.PreDestroy;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +23,14 @@ public class StreamsConfig {
     private IGroupPurchaseTopology groupPurchaseTopology;
     private KafkaStreams kafkaStreams;
     private ExecutorService singleService;
+
+    /*@Bean
+    public NewTopic topicBuilder() {
+        return TopicBuilder.name(GroupPurchaseTopology.PURCHASE_INPUT_TOPIC)
+                .partitions(2)
+                .replicas(1)
+                .build();
+    }*/
 
     @Bean
     public Properties kafkaStreamsProps() {
