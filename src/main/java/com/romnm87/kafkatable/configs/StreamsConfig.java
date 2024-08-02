@@ -1,6 +1,7 @@
 package com.romnm87.kafkatable.configs;
 
 
+import com.romnm87.kafkatable.topologies.GroupPurchaseTopology;
 import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -24,13 +25,13 @@ public class StreamsConfig {
     private KafkaStreams kafkaStreams;
     private ExecutorService singleService;
 
-    /*@Bean
+    @Bean
     public NewTopic topicBuilder() {
         return TopicBuilder.name(GroupPurchaseTopology.PURCHASE_INPUT_TOPIC)
                 .partitions(2)
                 .replicas(1)
                 .build();
-    }*/
+    }
 
     @Bean
     public Properties kafkaStreamsProps() {
