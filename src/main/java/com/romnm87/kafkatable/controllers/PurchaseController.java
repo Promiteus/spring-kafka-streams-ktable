@@ -3,10 +3,7 @@ package com.romnm87.kafkatable.controllers;
 import com.romnm87.kafkatable.dtos.Purchase;
 import com.romnm87.kafkatable.services.ProduceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,9 +16,15 @@ public class PurchaseController {
         this.produceService = produceService;
     }
 
-    @PostMapping(value = "/produce")
+    @PostMapping(value = "/purchases")
     public ResponseEntity<List<Purchase>> post(@RequestBody List<Purchase> purchases) {
         this.produceService.sendMessage(null, purchases);
         return ResponseEntity.ok().body(purchases);
+    }
+
+    @GetMapping(value = "/purchases/groups")
+    public ResponseEntity<?> get() {
+
+        return ResponseEntity.ok().build();
     }
 }

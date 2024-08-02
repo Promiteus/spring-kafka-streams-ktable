@@ -68,7 +68,6 @@ public class StreamsConfig {
         return args -> {
             singleService = Executors.newSingleThreadExecutor();
             singleService.submit(this.executeTopology(streamsBuilder(), kafkaStreamsProps()));
-
         };
     }
 

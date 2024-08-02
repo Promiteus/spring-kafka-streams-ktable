@@ -7,16 +7,25 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ProduceService {
     private final KafkaProducer<String, String> kafkaProducer;
+    private final StreamsBuilderFactoryBean streamsBuilderFactoryBean;
 
-    public ProduceService(KafkaProducer<String, String> kafkaProducer) {
+    public ProduceService(KafkaProducer<String, String> kafkaProducer, StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
         this.kafkaProducer = kafkaProducer;
+        this.streamsBuilderFactoryBean = streamsBuilderFactoryBean;
     }
 
     /**
@@ -41,5 +50,25 @@ public class ProduceService {
                });
            });
        }
+    }
+
+    /**
+     * Извлеч результаты группировка Apache Kafka из хранилища состояний GroupPurchaseTopology.PURCHASES_GROUPS_STORE
+     * @return List<Purchase>
+     */
+    public List<Purchase> getPurchaseGroups() {
+        ReadOnlyKeyValueStore<String, Purchase> purchasesStoreData = streamsBuilderFactoryBean.getKafkaStreams()
+                .store(StoreQueryParameters.fromNameAndType(
+                        GroupPurchaseTopology.PURCHASES_GROUPS_STORE,
+                        QueryableStoreTypes.keyValueStore()
+                ));
+
+        var purchases = purchasesStoreData.all();
+
+        var spliterator = Spliterators.spliteratorUnknownSize(purchases, 0);
+
+        return StreamSupport.stream(spliterator, false)
+                .map(data -> data.value)
+                .collect(Collectors.toList());
     }
 }
