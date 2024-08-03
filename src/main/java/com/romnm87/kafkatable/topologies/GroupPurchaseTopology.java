@@ -1,7 +1,7 @@
 package com.romnm87.kafkatable.topologies;
 
 import com.romnm87.kafkatable.dtos.Purchase;
-import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
+import com.romnm87.kafkatable.topologies.interfaces.ITopology;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -11,7 +11,7 @@ import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GroupPurchaseTopology implements IGroupPurchaseTopology {
+public class GroupPurchaseTopology implements ITopology {
     public final static String PURCHASE_INPUT_TOPIC = "purchases";
     public final static String PURCHASES_GROUPS_STORE = "purchases_groups_store";
 

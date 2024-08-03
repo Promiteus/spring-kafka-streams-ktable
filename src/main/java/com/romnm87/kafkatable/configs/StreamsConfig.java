@@ -1,7 +1,7 @@
 package com.romnm87.kafkatable.configs;
 
 import com.romnm87.kafkatable.topologies.GroupPurchaseTopology;
-import com.romnm87.kafkatable.topologies.interfaces.IGroupPurchaseTopology;
+import com.romnm87.kafkatable.topologies.interfaces.ITopology;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.KafkaStreams;
@@ -17,7 +17,7 @@ import java.util.Properties;
 @Configuration
 public class StreamsConfig {
     @Autowired
-    private IGroupPurchaseTopology groupPurchaseTopology;
+    private ITopology groupPurchaseTopology;
 
     @Bean
     public NewTopic topicBuilder() {
