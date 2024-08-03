@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.romnm87.kafkatable.dtos.Purchase;
 import com.romnm87.kafkatable.topologies.GroupPurchaseTopology;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,6 +21,7 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 public class ProduceService {
     private final KafkaProducer<String, String> kafkaProducer;
@@ -59,19 +61,24 @@ public class ProduceService {
      * @return List<Purchase>
      */
     public List<Purchase> getPurchaseGroups() {
-        ReadOnlyKeyValueStore<String, Purchase> purchasesStoreData = this.kafkaStreams
-                .store(StoreQueryParameters.fromNameAndType(
-                        GroupPurchaseTopology.PURCHASES_GROUPS_STORE,
-                        QueryableStoreTypes.keyValueStore()
-                ));
+        try {
+            ReadOnlyKeyValueStore<String, Purchase> purchasesStoreData = this.kafkaStreams
+                    .store(StoreQueryParameters.fromNameAndType(
+                            GroupPurchaseTopology.PURCHASES_GROUPS_STORE,
+                            QueryableStoreTypes.keyValueStore()
+                    ));
 
-        var purchases = purchasesStoreData.all();
+            var purchases = purchasesStoreData.all();
 
-        var spliterator = Spliterators.spliteratorUnknownSize(purchases, 0);
+            var spliterator = Spliterators.spliteratorUnknownSize(purchases, 0);
 
-        return StreamSupport.stream(spliterator, false)
-                .map(data -> data.value)
-                .collect(Collectors.toList());
+            return StreamSupport.stream(spliterator, false)
+                    .map(data -> data.value)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return List.of();
+        }
     }
 
     /**

@@ -24,7 +24,7 @@ public class PurchaseController {
 
     @GetMapping(value = "/purchases/groups")
     public ResponseEntity<?> get() {
-
-        return ResponseEntity.ok().build();
+        List<Purchase> purchases = this.produceService.getPurchaseGroups();
+        return ResponseEntity.ok().body(purchases);
     }
 }
