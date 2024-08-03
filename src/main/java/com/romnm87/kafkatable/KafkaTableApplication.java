@@ -25,7 +25,7 @@ public class KafkaTableApplication {
 
     private Runnable startStream() {
         return () -> {
-            log.warn("Kafka Streams started...");
+            log.warn("Kafka Streams starting...");
             this.kafkaStreams.start();
         };
     }
@@ -41,6 +41,7 @@ public class KafkaTableApplication {
 
     @PreDestroy
     public void destroy() {
+        log.warn("Stopping service single pool...");
         this.executorService.shutdownNow();
     }
 }
