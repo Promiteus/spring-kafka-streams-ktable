@@ -23,7 +23,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/produce",
+							"raw": "http://localhost:8080/api/purchases",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -31,7 +31,28 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"produce"
+								"purchases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отправить пачку сообщений Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/purchases/groups",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"purchases",
+								"groups"
 							]
 						}
 					},
