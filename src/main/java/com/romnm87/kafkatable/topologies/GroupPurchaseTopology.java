@@ -27,7 +27,8 @@ public class GroupPurchaseTopology implements ITopology {
 
 
         // Сгруппировать поток данных по ключу name
-        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam/*.map((key, purchase) -> KeyValue.pair(purchase.getName(), purchase))*/
+        // purchasesSteam.map() для ребалансировки топиков
+        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam.map((key, purchase) -> KeyValue.pair(purchase.getName(), purchase))
                 .groupByKey(Grouped.with(Serdes.String(), new JsonSerde<>(Purchase.class)));
 
         // Сложить цены сгруппированные данных из хранили со сгруппированными данными, поступающими из потока данных
