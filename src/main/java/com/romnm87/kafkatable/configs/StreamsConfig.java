@@ -59,7 +59,6 @@ public class StreamsConfig {
     public KafkaStreams kafkaStreams(StreamsBuilder streamsBuilder, Properties kafkaStreamsProps) {
         this.groupPurchaseTopology.process(streamsBuilder);
         var kafkaStreams = new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps);
-        //kafkaStreams.start();
         return kafkaStreams;
     }
 }
