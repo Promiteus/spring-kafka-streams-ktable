@@ -1,5 +1,6 @@
 package com.romnm87.kafkatable;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KafkaStreams;
@@ -43,5 +44,10 @@ public class KafkaTableApplication {
     public void destroy() {
         log.warn("Stopping service single pool...");
         this.executorService.shutdownNow();
+    }
+
+    @PostConstruct
+    public void cleanUpStates() {
+        this.kafkaStreams.cleanUp();
     }
 }
