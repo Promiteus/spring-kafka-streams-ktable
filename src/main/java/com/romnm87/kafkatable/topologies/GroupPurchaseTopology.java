@@ -17,20 +17,27 @@ public class GroupPurchaseTopology implements ITopology {
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
+        //Получать только последние данные из топика PURCHASE_INPUT_TOPIC -- Topology.AutoOffsetReset.LATEST.
+        //Модифицировать поток данных (selectKey()) добавление в качестве ключа поля name модели Purchase
         KStream<String, Purchase> purchasesSteam = streamsBuilder.stream(PURCHASE_INPUT_TOPIC, Consumed.with(Serdes.String(), new JsonSerde<>(Purchase.class)).withOffsetResetPolicy(Topology.AutoOffsetReset.LATEST))
                 .selectKey((k, v) -> v.getName());
 
+        //Вывести в консоль исходные данные топика с новым ключом на базе поля name. Метка в консоле [purchases_topic]
         purchasesSteam.print(Printed.<String, Purchase>toSysOut().withLabel("purchases_topic"));
 
-        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam.map((key, purchase) -> KeyValue.pair(purchase.getName(), purchase))
+
+        // Сгруппировать поток данных по ключу name
+        KGroupedStream<String, Purchase> purchaseGroups = purchasesSteam/*.map((key, purchase) -> KeyValue.pair(purchase.getName(), purchase))*/
                 .groupByKey(Grouped.with(Serdes.String(), new JsonSerde<>(Purchase.class)));
 
+        // Сложить цены сгруппированные данных из хранили со сгруппированными данными, поступающими из потока данных
         KTable<String, Purchase> purchaseKTable = purchaseGroups.reduce((purchase, v1) -> Purchase.builder()
                 .currency(purchase.getCurrency())
                 .id(purchase.getId())
                 .timestamp(v1.getTimestamp())
-                .name(purchase.getName()).price(purchase.getPrice()+v1.getPrice()).build(), Materialized.as(PURCHASES_GROUPS_STORE));
+                .name(purchase.getName())
+                .price(purchase.getPrice()+v1.getPrice()).build(), Materialized.as(PURCHASES_GROUPS_STORE));
 
-        purchaseKTable.toStream().print(Printed.<String, Purchase>toSysOut().withLabel("purchases_groups"));
+        purchaseKTable.toStream().print(Printed.<String, Purchase>toSysOut().withLabel("purchases_table"));
     }
 }
