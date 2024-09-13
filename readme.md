@@ -136,3 +136,26 @@ Message sent successfully. Offset: 6
 ```  
 
 Все последующие вызовы будут суммировать и группировать поступающие данные для новых и старых ключей.  
+
+### Визуализация процессов в кластере Kafka  
+
+Для визуализации процессов вписан сервис kafka-ui в файл docker-compose.yml:  
+```
+kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8082:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+```
+
+Если приложение было запущено в первый раз, то вам нужно зайти в веб-интерфейс сервиса kafka-ui по ссылке: http://localhost:8082/  
+Для связи сервиса с брокером нужно указать следующие параметры:  
+1. Cluster name - Можете указать просто как "Kafka Cluster"
+
+2. Bootstrap Servers - Суда вам внужно вписать host PLAINTEXT://kafka, port 29092 ну или другое наименование в зависимости от вашей конфигурации параметра "KAFKA_ADVERTISED_LISTENERS" в kafka image. Соотвественно если у вас поднято несколько реплик кафки, вам нужно их всех вписать. Apache рекомендуют иметь 3 ноды с kafka на вашем проекте.
+
+3. Metrics  
+   3.1 metrics type -> JMX  
+   3.2 port -> 9101 ну или как вы указали в своей конфигурации KAFKA_JMX_PORT брокера
